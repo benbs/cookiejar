@@ -1,6 +1,6 @@
-import React from 'react';
-import { View, Text, StyleSheet, ViewStyle, TextInput, Button, ToastAndroid } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import React, {useState} from 'react';
+import { View, Text, StyleSheet, ViewStyle, TextInput,  ToastAndroid, TouchableOpacity } from 'react-native';
+import auth from '@react-native-firebase/auth';
 
 const centeredView = {
     alignItems: 'center',
@@ -50,28 +50,52 @@ const styles = StyleSheet.create({
     }
 })
 
-function LoginButton({ children }) {
-    return (<TouchableOpacity style={styles.loginButton}>
-        <Text style={styles.loginButtonText}>{children}</Text>
-    </TouchableOpacity>)
+function LoginButton({ children , ...props}) {
+    return (
+        <TouchableOpacity {...props}
+            style={styles.loginButton}>
+            <Text style={styles.loginButtonText}>{children}</Text>
+        </TouchableOpacity>
+    );
 }
 
-export default function SignInScreen(props) {
+async function emailSignIn(email, password) {
+    try {
+        ToastAndroid.show('loging in...', ToastAndroid.BOTTOM);
+        await auth().signInWithEmailAndPassword(email, password);
+    } catch (e) {
+        ToastAndroid.show(e.message, ToastAndroid.BOTTOM);
+        // console.error(e.message);
+      }
+}
+
+export default function SignInScreen({navigation}) {
+    const [email, setEmail] = useState();
+    const [password, setPassword] = useState();
+
     const { main } = styles;
     return <View style={main}>
         <View style={styles.logo}>
             <Text style={{fontSize: 36}}>Cookie Jar</Text>
         </View>
         <View style={styles.userLogin}>
-            <TextInput style={styles.loginInput} placeholder="Username" placeholderTextColor="#969696"></TextInput>
-            <TextInput style={styles.loginInput} placeholder="Password" placeholderTextColor="#969696"></TextInput>
-            <LoginButton>GO</LoginButton>
+            <TextInput style={styles.loginInput}
+                placeholder="Username"
+                placeholderTextColor="#969696"
+                onChangeText={setEmail}
+                value={email}></TextInput>
+            <TextInput style={styles.loginInput}
+                placeholder="Password"
+                placeholderTextColor="#969696"
+                onChangeText={setPassword}
+                value={password}></TextInput>
+            <LoginButton onPress={() => emailSignIn(email, password)}>GOOOO</LoginButton>
         </View>
         <View style={styles.thirdPartyLogin}>
             <LoginButton>Continue with Facebook</LoginButton>
             <LoginButton>Continue with Google</LoginButton>
             <View style={{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center'}}>
-                <Text>or </Text><Text onPress={() => ToastAndroid.show('AAA', ToastAndroid.BOTTOM)} style={{color: 'rgb(78, 152, 255)'}}>Sign up</Text>
+                <Text>or </Text><Text onPress={() => ToastAndroid.show(email, ToastAndroid.BOTTOM)} style={{color: 'rgb(78, 152, 255)'}}>Sign up</Text>
             </View>
         </View>
     </View>

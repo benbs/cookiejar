@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StatusBar, ActivityIndicator, View } from 'react-native';
+import { StatusBar, ActivityIndicator, View, ToastAndroid } from 'react-native';
 import auth from '@react-native-firebase/auth';
 
 export default function ({ navigation }) {
@@ -10,15 +10,14 @@ export default function ({ navigation }) {
     function onAuthStateChanged(user) {
         setUser(user);
         if (initilizing) setInitilizing(false);
+        navigation.navigate(user ? 'Home' : 'SignIn');
     }
 
     useEffect(() => {
         const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
         return subscriber; // unsubscribe on unmount
     }, []);
-    // useEffect(() => {
-    //     navigation.navigate('SignIn')
-    // });
+
     return <View>
         <ActivityIndicator />
         <StatusBar barStyle="default" />
