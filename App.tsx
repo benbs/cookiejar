@@ -14,15 +14,17 @@ import SignInScreen from './src/components/auth/SignInScreen';
 import AuthLoadingScreen from './src/components/auth/AuthLoadingScreen';
 
 import firebase from '@react-native-firebase/app';
+import SnackListScreen from './src/components/SnackList';
 
-// TODO(you): import any additional firebase services that you require for your app, e.g for auth:
-//    1) install the npm package: `yarn add @react-native-firebase/auth@alpha` - you do not need to
-//       run linking commands - this happens automatically at build time now
-//    2) rebuild your app via `yarn run run:android` or `yarn run run:ios`
-//    3) import the package here in your JavaScript code: `import '@react-native-firebase/auth';`
-//    4) The Firebase Auth service is now available to use here: `firebase.auth().currentUser`
-
-const AppStack = createStackNavigator({ Home: HomeScreen });
+const AppStack = createStackNavigator({
+  Home: HomeScreen,
+  SnackList: {
+    screen: SnackListScreen,
+    navigationOptions: {  
+      header: null
+    }
+  }
+});
 const AuthStack = createStackNavigator({
   SignIn: {
     screen: SignInScreen,

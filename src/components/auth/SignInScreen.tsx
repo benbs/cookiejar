@@ -59,19 +59,18 @@ function LoginButton({ children , ...props}) {
     );
 }
 
-async function emailSignIn(email, password) {
-    try {
-        ToastAndroid.show('loging in...', ToastAndroid.BOTTOM);
-        await auth().signInWithEmailAndPassword(email, password);
-    } catch (e) {
-        ToastAndroid.show(e.message, ToastAndroid.BOTTOM);
-        // console.error(e.message);
-      }
-}
-
 export default function SignInScreen({navigation}) {
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
+
+    async function emailSignIn() {
+        try {
+            await auth().signInWithEmailAndPassword(email, password);
+            navigation.navigate('SnackList');
+        } catch (e) {
+            ToastAndroid.show(e.message, ToastAndroid.BOTTOM);
+        }
+    }
 
     const { main } = styles;
     return <View style={main}>
@@ -88,8 +87,10 @@ export default function SignInScreen({navigation}) {
                 placeholder="Password"
                 placeholderTextColor="#969696"
                 onChangeText={setPassword}
+                autoCompleteType="password"
+                secureTextEntry={true}
                 value={password}></TextInput>
-            <LoginButton onPress={() => emailSignIn(email, password)}>GOOOO</LoginButton>
+            <LoginButton onPress={() => emailSignIn()}>GO</LoginButton>
         </View>
         <View style={styles.thirdPartyLogin}>
             <LoginButton>Continue with Facebook</LoginButton>

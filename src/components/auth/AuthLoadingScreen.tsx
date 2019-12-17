@@ -10,7 +10,7 @@ export default function ({ navigation }) {
     function onAuthStateChanged(user) {
         setUser(user);
         if (initilizing) setInitilizing(false);
-        navigation.navigate(user ? 'Home' : 'SignIn');
+        navigation.navigate(user ? 'SnackList' : 'SignIn');
     }
 
     useEffect(() => {

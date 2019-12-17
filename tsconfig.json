@@ -6,6 +6,7 @@
       "dom",
       "es2019"
     ],
+    "downlevelIteration": true,
     "moduleResolution": "node",
     "noEmit": true,
     "skipLibCheck": true,
