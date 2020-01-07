@@ -5,7 +5,8 @@
     "build": "tsc",
     "serve": "npm run build && firebase serve --only functions",
     "shell": "npm run build && firebase functions:shell",
-    "start": "npm run shell",
+    "start1": "npm run shell",
+    "start": "tsc -w",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log"
   },
