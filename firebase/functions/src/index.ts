@@ -1,6 +1,6 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
-const serviceAccount = require('../../../../firebase-key.json');
+const serviceAccount = require('./firebase-key.json');
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
@@ -27,18 +27,7 @@ async function getAction(machineId: string, actionParams: string) {
     status: 'OK',
     elia: '47'
   }
-  // const machineData = (await db.collection('machines').doc(machineId).get()).data();
-  // if (!machineData) return;
-  
-  // const slotIndex = parseInt(actionParams)
-  // const slot = machineData.inventory[slotIndex];
-  // if (!slot || !slot.length) {
-  //   return;
-  // }
-
-  // await machine.set({
-  //   [`inventory.${slotIndex}`]: slot.slice(1)
-  // });
+ 
 
 }
 
