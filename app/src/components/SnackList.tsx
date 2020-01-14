@@ -6,6 +6,8 @@ import SnackPage from './SnackPage';
 import firestore from '@react-native-firebase/firestore';
 import { NavigationScreenProp, NavigationState, NavigationParams } from 'react-navigation';
 
+import BarcodeScannerScreen2 from './BarcodeScannerScreen';
+
 import Text from './common/Text';
 import auth from '@react-native-firebase/auth';
 
@@ -130,7 +132,7 @@ export default function SnackList() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // auth().signOut();
+        //auth().signOut();
         const _unsubscribe = firestore().collection('users').doc('benbs93@gmail.com').onSnapshot(doc => {
             const user =  doc.data();
 
@@ -140,48 +142,49 @@ export default function SnackList() {
             }
         });
 
-
         return () => _unsubscribe();
     });
 
     if (loading) {
         return <Text>loading...</Text>;
     }
-
     return <>
-        <View style={styles.topSection}>
-            <View style={styles.titleBar}>
-                <TouchableOpacity onPress={handlePress}>
-                    <Image 
-                        style={styles.settingsIcon}
-                        source={require('../../assets/images/settings.png')}
-                    ></Image>
-                </TouchableOpacity>
-                <Text style={styles.welcomeHeader}>Welcome, {currentUser.name}</Text>
-            </View>
-            <View style={styles.dial}>
-                <Image
-                    style={{resizeMode: 'center'}}
-                    source={require('../../assets/images/dial.png')}>
-                </Image>
-            </View>
-        </View>
-        <View style={styles.snackSection}>
-            {snacksMock.map((snack, idx) => (
-                <View style={styles.snackItem} key={idx}>
-                    <View style={styles.snackImage}>
-                    <Image
-                        style={{width: 105, height: 105}}
-                        source={{uri: snack.image}}
-                    />
-                    </View>
-                    <View style={styles.snackDescription}>
-                        <Text style={{ fontSize: 20 }}>{snack.name}</Text>
-                        <Text style={{ fontSize: 12 }}>{snack.description}</Text>
-                    </View>
-                </View>
-            ))}
-        </View>
-
+        <BarcodeScannerScreen2 />
+        
+        
     </>;
+   /* <View style={styles.topSection}>
+    <View style={styles.titleBar}>
+        <TouchableOpacity onPress={handlePress}>
+            <Image 
+                style={styles.settingsIcon}
+                source={require('../../assets/images/settings.png')}
+            ></Image>
+        </TouchableOpacity>
+        <Text style={styles.welcomeHeader}>Welcome, {currentUser.name}</Text>
+    </View>
+    <View style={styles.dial}>
+        <Image
+            style={{resizeMode: 'center'}}
+            source={require('../../assets/images/dial.png')}>
+        </Image>
+    </View>
+</View>
+<View style={styles.snackSection}>
+    {snacksMock.map((snack, idx) => (
+        <View style={styles.snackItem} key={idx}>
+            <View style={styles.snackImage}>
+            <Image
+                style={{width: 105, height: 105}}
+                source={{uri: snack.image}}
+            />
+            </View>
+            <View style={styles.snackDescription}>
+                <Text style={{ fontSize: 20 }}>{snack.name}</Text>
+                <Text style={{ fontSize: 12 }}>{snack.description}</Text>
+            </View>
+        </View>
+    ))}
+</View>
+*/
 }

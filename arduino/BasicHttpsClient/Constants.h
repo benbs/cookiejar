@@ -28,8 +28,8 @@ String URL = "https://firestore.googleapis.com/v1beta1/projects/cookie-jar-c7a3a
 #define CYCLE_PULSES 200
 #define MOTOR_SPEED 1500
 
-#define SSID "BenSassons2.4"
-#define PASSWORD "k7p23txr"
+#define SSID "Elia"
+#define PASSWORD "eliaweiz"
 
 #define ACTION "actionType"
 #define ACTION_PUT "put"
@@ -45,7 +45,7 @@ String URL = "https://firestore.googleapis.com/v1beta1/projects/cookie-jar-c7a3a
 #define CART_DIR_PIN 2//TODO: <ENTER NUMBER>
 #define CART_SERVO_PIN 9
 
-#define RESET_ADDRESS "2"
-#define PROCESS_DONE_ADDRESS "2"
+#define RESET_ADDRESS "https://us-central1-cookie-jar-c7a3a.cloudfunctions.net/resetMachine"
+#define PROCESS_DONE_ADDRESS "https://us-central1-cookie-jar-c7a3a.cloudfunctions.net/iotFinishJob"
 
 #define MAX_LEN 100
