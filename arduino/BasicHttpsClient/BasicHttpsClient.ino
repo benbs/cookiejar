@@ -129,23 +129,23 @@ void spinStepper(int motorID, int cycles) {
   //-----------
   switch (motorID) {
     case 0:
-      stepPin = D0;
-      dirPin = D1;
+      stepPin = ID0;
+      dirPin = ID1;
       break;
 
     case 1:
-      stepPin = D2;
-      dirPin = D3;
+      stepPin = ID2;
+      dirPin = ID3;
       break;
 
     case 2:
-      stepPin = 2;
-      dirPin = 14;
+      stepPin = ID4;
+      dirPin = ID5;
       break;
 
     case 3:
-      stepPin = 12;
-      dirPin = 13;
+      stepPin = ID6;
+      dirPin = ID7;
       break;
 
     case CART_ID:
@@ -195,7 +195,8 @@ void helixUnload(JsonObject& desired) {
   int helixID = desired[DESIRED_HELIX]["integerValue"];
   int cycles = desired[DESIRED_CYCLES]["integerValue"];
   Serial.println("helixUnload\n");
-
+  Serial.println(helixes);
+  Serial.println(helixID);
   if (helixID <= helixes) {
     spinStepper(helixID, cycles);
   } else {
@@ -206,16 +207,20 @@ void helixUnload(JsonObject& desired) {
 }
 
 void setup() {
-  pinMode(D0, OUTPUT);
-  pinMode(D1, OUTPUT);
-  pinMode(D2, OUTPUT);
-  pinMode(D3, OUTPUT);
-  pinMode(D4, OUTPUT);
-  pinMode(D5, OUTPUT);
-  pinMode(D6, OUTPUT);
-  pinMode(D7, OUTPUT);
-  pinMode(D8, OUTPUT);
-
+  pinMode(ID0, OUTPUT);
+  pinMode(ID1, OUTPUT);
+  pinMode(ID2, OUTPUT);
+  pinMode(ID3, OUTPUT);
+  pinMode(ID4, OUTPUT);
+  pinMode(ID5, OUTPUT);
+  pinMode(ID6, OUTPUT);
+  pinMode(ID7, OUTPUT);
+  pinMode(ID8, OUTPUT);
+  pinMode(IRX, OUTPUT);
+  pinMode(ITX, OUTPUT);
+  pinMode(ISD2, OUTPUT);
+ // pinMode(ISD3, OUTPUT);
+  
   Serial.begin(115200);
   // Serial.setDebugOutput(true);
   Serial.println("ver 4.0\n");

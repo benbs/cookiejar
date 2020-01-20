@@ -10,39 +10,42 @@ static const char kFirebaseFingerprint[] =
 String URL = "https://firestore.googleapis.com/v1beta1/projects/cookie-jar-c7a3a/databases/(default)/documents/machines/o5AkuMpP2Vb2bpQvGx70";
 
 
-#define D0 16
-#define D1 5
-#define D2 4
-#define D3 0
-#define D4 2
-#define D5 14
-#define D6 12
-#define D7 13
-#define D8 15
-#define RX 3
-#define TX 1
-#define SD2 10
-#define SD3 9
+#define ID0 16
+#define ID1 5
+#define ID2 4
+#define ID3 0
+#define ID4 2
+#define ID5 14
+#define ID6 12
+#define ID7 13
+#define ID8 15
+#define IRX 3
+#define ITX 1
+#define ISD2 10
+#define ISD3 9
 
 
 #define CYCLE_PULSES 200
 #define MOTOR_SPEED 1500
 
-#define SSID "Elia"
-#define PASSWORD "eliaweiz"
+#define SSID "BenSassons2.4"
+#define PASSWORD "k7p23txr"
+
+//#define SSID "Elia"
+//#define PASSWORD "eliaweiz"
 
 #define ACTION "actionType"
 #define ACTION_PUT "put"
 #define ACTION_GET "get"
 
 #define DESIRED_CYCLES "cycles"
-#define DESIRED_HELIX "HelixIndex"
+#define DESIRED_HELIX "helixIndex"
 #define VERSION "$version"
 
 #define CART_CYCLES 1//TODO: <ENTER NUMBER>//THIS IS NUM OF CYCLES TO DO 1 HELIX STEP
 #define CART_ID 5
-#define CART_STEP_PIN 2//TODO: <ENTER NUMBER>
-#define CART_DIR_PIN 2//TODO: <ENTER NUMBER>
+#define CART_STEP_PIN IRX//TODO: <ENTER NUMBER>
+#define CART_DIR_PIN ITX//TODO: <ENTER NUMBER>
 #define CART_SERVO_PIN 9
 
 #define RESET_ADDRESS "https://us-central1-cookie-jar-c7a3a.cloudfunctions.net/resetMachine"
