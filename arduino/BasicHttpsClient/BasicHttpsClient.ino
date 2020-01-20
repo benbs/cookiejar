@@ -151,6 +151,7 @@ void spinStepper(int motorID, int cycles) {
     case CART_ID:
       stepPin = CART_STEP_PIN;
       dirPin = CART_DIR_PIN;
+      Serial.println("switch cart case");
       break;
 
     default:
@@ -158,12 +159,22 @@ void spinStepper(int motorID, int cycles) {
       stepPin = -1;
       break;
   }
-
-  if (cycles > 0)
+  Serial.println("this is dirpin:");
+  Serial.println(dirPin);
+  Serial.println("this is steppin:");
+  Serial.println(stepPin);
+  if (cycles > 0){
+    Serial.println("got cycles1");
     digitalWrite(dirPin, HIGH); // Enables the motor to move in a particular direction
-  else
+    Serial.println("got cycles2");
+  }
+  else{
     digitalWrite(dirPin, LOW);
+  }
+  yield();
+  Serial.println(" spinning");
   for (int i = 0; i < abs(cycles); i++) {
+    Serial.println(i);
     for (int x = 0; x < CYCLE_PULSES; x++) {
       digitalWrite(stepPin, HIGH);
       delayMicroseconds(MOTOR_SPEED);
@@ -172,6 +183,8 @@ void spinStepper(int motorID, int cycles) {
     }
     yield();
   }
+    Serial.println("done spinning");
+
 }
 
 void helixDeposit(JsonObject& desired) {
@@ -181,8 +194,14 @@ void helixDeposit(JsonObject& desired) {
   Serial.println("helixDeposit\n");
   if (helixID <= helixes) {
     spinStepper(helixID, cycles);// get machine ready to new snack
-    spinStepper(CART_ID, CART_CYCLES * (helixID)); // move cart to chosen helix
-    openCart();//open cart
+    Serial.println("moving cart:");
+    Serial.println(CART_CYCLES * (helixID));
+//    spinStepper(CART_ID, CART_CYCLES * (helixID)); // move cart to chosen helix
+    delay(1000);
+    spinStepper(CART_ID,2);
+    Serial.println("done moving cart");
+
+    //openCart();//open cart
     spinStepper(CART_ID, CART_CYCLES * (helixID) * -1); //move cart to base
   } else {
     Serial.println("ERROR!\n");
@@ -219,8 +238,8 @@ void setup() {
   pinMode(IRX, OUTPUT);
   pinMode(ITX, OUTPUT);
   pinMode(ISD2, OUTPUT);
- // pinMode(ISD3, OUTPUT);
-  
+  // pinMode(ISD3, OUTPUT);
+
   Serial.begin(115200);
   // Serial.setDebugOutput(true);
   Serial.println("ver 4.0\n");
