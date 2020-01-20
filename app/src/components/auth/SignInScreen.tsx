@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import { View, Text, StyleSheet, ViewStyle, TextInput,  ToastAndroid, TouchableOpacity } from 'react-native';
 import auth from '@react-native-firebase/auth';
+import BarcodeScannerScreen from '../BarcodeScannerScreen';
 
 const centeredView = {
     alignItems: 'center',
@@ -67,6 +68,7 @@ export default function SignInScreen({navigation}) {
         try {
             await auth().signInWithEmailAndPassword(email, password);
             navigation.navigate('SnackList');
+            
         } catch (e) {
             ToastAndroid.show(e.message, ToastAndroid.BOTTOM);
         }

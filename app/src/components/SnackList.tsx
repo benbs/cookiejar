@@ -171,12 +171,6 @@ export default function SnackList({ navigation }) {
                 </TouchableOpacity>
                 <Text style={styles.welcomeHeader}>Welcome, {currentUser.name}</Text>
             </View>
-            <View style={styles.dial}>
-                <Image
-                    style={{resizeMode: 'center'}}
-                    source={require('../../assets/images/dial.png')}>
-                </Image>
-            </View>
         </View>
         <View style={styles.snackSection}>
             {inventoryEntries.length ? inventoryEntries.map(([idx, snack]) => (
