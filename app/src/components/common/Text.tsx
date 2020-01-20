@@ -12,3 +12,7 @@ const styles = StyleSheet.create({
 export default function Text({ children, style = {}, ...props }) {
     return <SystemText style={{ ...styles.main, ...style }} {...props}>{children}</SystemText>
 }
+
+export const ColoredText = ({ color, children, style = {}, ...props }) => {
+    return <Text style={{ color, ...style }} {...props}>{children}</Text>;
+};
