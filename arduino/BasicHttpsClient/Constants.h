@@ -44,8 +44,8 @@ String URL = "https://firestore.googleapis.com/v1beta1/projects/cookie-jar-c7a3a
 
 #define CART_CYCLES 1//TODO: <ENTER NUMBER>//THIS IS NUM OF CYCLES TO DO 1 HELIX STEP
 #define CART_ID 5
-#define CART_STEP_PIN IRX//TODO: <ENTER NUMBER>
-#define CART_DIR_PIN ITX//TODO: <ENTER NUMBER>
+#define CART_STEP_PIN 3//TODO: <ENTER NUMBER>
+#define CART_DIR_PIN 1//TODO: <ENTER NUMBER>
 #define CART_SERVO_PIN 9
 
 #define RESET_ADDRESS "https://us-central1-cookie-jar-c7a3a.cloudfunctions.net/resetMachine"
