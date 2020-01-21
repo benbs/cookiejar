@@ -28,11 +28,11 @@ String URL = "https://firestore.googleapis.com/v1beta1/projects/cookie-jar-c7a3a
 #define CYCLE_PULSES 200
 #define MOTOR_SPEED 1500
 
-#define SSID "BenSassons2.4"
-#define PASSWORD "k7p23txr"
+//#define SSID "BenSassons2.4"
+//#define PASSWORD "k7p23txr"
 
-//#define SSID "Elia"
-//#define PASSWORD "eliaweiz"
+#define SSID "Elia"
+#define PASSWORD "eliaweiz"
 
 #define ACTION "actionType"
 #define ACTION_PUT "put"
@@ -42,11 +42,11 @@ String URL = "https://firestore.googleapis.com/v1beta1/projects/cookie-jar-c7a3a
 #define DESIRED_HELIX "helixIndex"
 #define VERSION "$version"
 
-#define CART_CYCLES 1//TODO: <ENTER NUMBER>//THIS IS NUM OF CYCLES TO DO 1 HELIX STEP
+#define CART_CYCLES 3//TODO: <ENTER NUMBER>//THIS IS NUM OF CYCLES TO DO 1 HELIX STEP
 #define CART_ID 5
 #define CART_STEP_PIN 3//TODO: <ENTER NUMBER>
 #define CART_DIR_PIN 1//TODO: <ENTER NUMBER>
-#define CART_SERVO_PIN 9
+#define CART_SERVO_PIN 15
 
 #define RESET_ADDRESS "https://us-central1-cookie-jar-c7a3a.cloudfunctions.net/resetMachine"
 #define PROCESS_DONE_ADDRESS "https://us-central1-cookie-jar-c7a3a.cloudfunctions.net/iotFinishJob"

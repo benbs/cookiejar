@@ -22,6 +22,7 @@ HTTPClient https;
 
 int helixes; // number of candy lanes
 int lastUpdated;
+Servo myservo;
 
 void httpUrl(const char* url) {
   if ((WiFiMulti.run() == WL_CONNECTED)) {
@@ -31,53 +32,53 @@ void httpUrl(const char* url) {
     //    client->setFingerprint(fingerprint);
     client->setInsecure();
 
-    Serial.print("[HTTPS] begin...\n");
+    //.print("[HTTPS] begin...\n");
     if (https.begin(*client, url)) {  // HTTPS
 
-      Serial.print("[HTTPS] GET...\n");
+      //.print("[HTTPS] GET...\n");
       // start connection and send HTTP header
       int httpCode = https.GET();
 
       // httpCode will be negative on error
       if (httpCode > 0) { // TODO----------------------------------------might want to loop on statement----------------------------------------
         // HTTP header has been send and Server response header has been handled
-        Serial.printf("[HTTPS] GET... code: %d\n", httpCode);
+        //.printf("[HTTPS] GET... code: %d\n", httpCode);
         // TODO----------------------------------------do something with response----------------------------------------
       } else {
-        Serial.printf("[HTTPS] GET... failed, error: %s\n", https.errorToString(httpCode).c_str());
+        //.printf("[HTTPS] GET... failed, error: %s\n", https.errorToString(httpCode).c_str());
       }
 
       https.end();
     } else {
-      Serial.printf("[HTTPS] Unable to connect\n");
+      //.printf("[HTTPS] Unable to connect\n");
     }
   }
 }
 void firebaseFuncCall(const char* function) {
 
-  if (strcmp(function, "resetMachine")) {
+  if (!strcmp(function, "resetMachine")) {
     httpUrl(RESET_ADDRESS);
   }
-  if (strcmp(function, "proccess done")) {
+  if (!strcmp(function, "proccess done")) {
     httpUrl(PROCESS_DONE_ADDRESS);
   }
 }
-
-
-
 void openCart() {
-  Servo myservo;  // create servo object to control a servo
   int pos = 0;    // variable to store the servo position
-  myservo.attach(CART_SERVO_PIN);  // attaches the servo on pin 9 to the servo object
+  for (int i = 0; i < 2 ; ++i) {
+    for (pos = 180; pos >= 0; pos -= 1) { // goes from 180 degrees to 0 degrees
+      myservo.write(pos);              // tell servo to go to position in variable 'pos'
+      delay(5);                       // waits 15ms for the servo to reach the position
+    }
+      delay(1000);                       // waits 15ms for the servo to reach the position
 
-  for (pos = 0; pos <= 180; pos += 1) { // goes from 0 degrees to 180 degrees in steps of 1 degree
-    myservo.write(pos);              // tell servo to go to position in variable 'pos'
-    delay(15);                       // waits 15ms for the servo to reach the position
+    for (pos = 0; pos <= 180; pos += 1) { // goes from 0 degrees to 180 degrees in steps of 1 degree
+      myservo.write(pos);              // tell servo to go to position in variable 'pos'
+      delay(5);                       // waits 15ms for the servo to reach the position
+    }
+    delay(1000); 
   }
-  for (pos = 180; pos >= 0; pos -= 1) { // goes from 180 degrees to 0 degrees
-    myservo.write(pos);              // tell servo to go to position in variable 'pos'
-    delay(15);                       // waits 15ms for the servo to reach the position
-  }
+
 }
 JsonObject& getJson(String JsonURL) {
   JsonObject& doc = jsonBuffer.parseObject("{}");
@@ -88,17 +89,17 @@ JsonObject& getJson(String JsonURL) {
     //    client->setFingerprint(fingerprint);
     client->setInsecure();
 
-    Serial.print("[HTTPS] begin...\n");
+    //.print("[HTTPS] begin...\n");
     if (https.begin(*client, JsonURL)) {  // HTTPS
 
-      Serial.print("[HTTPS] GET...\n");
+      //.print("[HTTPS] GET...\n");
       // start connection and send HTTP header
       int httpCode = https.GET();
 
       // httpCode will be negative on error
       if (httpCode > 0) {
         // HTTP header has been send and Server response header has been handled
-        Serial.printf("[HTTPS] GET... code: %d\n", httpCode);
+        //.printf("[HTTPS] GET... code: %d\n", httpCode);
 
         // file found at server
         if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY) {
@@ -110,12 +111,12 @@ JsonObject& getJson(String JsonURL) {
 
         }
       } else {
-        Serial.printf("[HTTPS] GET... failed, error: %s\n", https.errorToString(httpCode).c_str());
+        //.printf("[HTTPS] GET... failed, error: %s\n", https.errorToString(httpCode).c_str());
       }
 
       https.end();
     } else {
-      Serial.printf("[HTTPS] Unable to connect\n");
+      //.printf("[HTTPS] Unable to connect\n");
     }
   }
   return doc;
@@ -151,7 +152,7 @@ void spinStepper(int motorID, int cycles) {
     case CART_ID:
       stepPin = CART_STEP_PIN;
       dirPin = CART_DIR_PIN;
-      Serial.println("switch cart case");
+      //.println("switch cart case");
       break;
 
     default:
@@ -159,22 +160,15 @@ void spinStepper(int motorID, int cycles) {
       stepPin = -1;
       break;
   }
-  Serial.println("this is dirpin:");
-  Serial.println(dirPin);
-  Serial.println("this is steppin:");
-  Serial.println(stepPin);
-  if (cycles > 0){
-    Serial.println("got cycles1");
+
+  if (cycles > 0) {
     digitalWrite(dirPin, HIGH); // Enables the motor to move in a particular direction
-    Serial.println("got cycles2");
   }
-  else{
+  else {
     digitalWrite(dirPin, LOW);
   }
   yield();
-  Serial.println(" spinning");
   for (int i = 0; i < abs(cycles); i++) {
-    Serial.println(i);
     for (int x = 0; x < CYCLE_PULSES; x++) {
       digitalWrite(stepPin, HIGH);
       delayMicroseconds(MOTOR_SPEED);
@@ -183,7 +177,6 @@ void spinStepper(int motorID, int cycles) {
     }
     yield();
   }
-    Serial.println("done spinning");
 
 }
 
@@ -191,37 +184,27 @@ void helixDeposit(JsonObject& desired) {
 
   int helixID = desired[DESIRED_HELIX]["integerValue"];
   int cycles = desired[DESIRED_CYCLES]["integerValue"];
-  Serial.println("helixDeposit\n");
   if (helixID <= helixes) {
     spinStepper(helixID, cycles);// get machine ready to new snack
-    Serial.println("moving cart:");
-    Serial.println(CART_CYCLES * (helixID));
-//    spinStepper(CART_ID, CART_CYCLES * (helixID)); // move cart to chosen helix
-    delay(1000);
-    spinStepper(CART_ID,2);
-    Serial.println("done moving cart");
-
-    //openCart();//open cart
+    spinStepper(CART_ID, CART_CYCLES * (helixID)); // move cart to chosen helix
+    //delay(1000);
+    openCart();//open cart
     spinStepper(CART_ID, CART_CYCLES * (helixID) * -1); //move cart to base
+    spinStepper(helixID, cycles*(-1)); // get machine ready to new snack
+
   } else {
-    Serial.println("ERROR!\n");
-    Serial.println("ERROR!\n");
-    Serial.println("ERROR!\n");
+    //.println("ERROR!\n");
   }
 }
 
 void helixUnload(JsonObject& desired) {
   int helixID = desired[DESIRED_HELIX]["integerValue"];
   int cycles = desired[DESIRED_CYCLES]["integerValue"];
-  Serial.println("helixUnload\n");
-  Serial.println(helixes);
-  Serial.println(helixID);
+  //.println("helixUnload\n");
   if (helixID <= helixes) {
-    spinStepper(helixID, cycles);
+    spinStepper(helixID, 1);
   } else {
-    Serial.println("ERROR!\n");
-    Serial.println("ERROR!\n");
-    Serial.println("ERROR!\n");
+    //.println("ERROR!\n");
   }
 }
 
@@ -234,18 +217,20 @@ void setup() {
   pinMode(ID5, OUTPUT);
   pinMode(ID6, OUTPUT);
   pinMode(ID7, OUTPUT);
-  pinMode(ID8, OUTPUT);
+  //pinMode(ID8, OUTPUT);
   pinMode(IRX, OUTPUT);
   pinMode(ITX, OUTPUT);
   pinMode(ISD2, OUTPUT);
+  myservo.attach(CART_SERVO_PIN);
+  myservo.write(180);
   // pinMode(ISD3, OUTPUT);
 
-  Serial.begin(115200);
-  // Serial.setDebugOutput(true);
-  Serial.println("ver 4.0\n");
+  //.begin(115200);
+  // //.setDebugOutput(true);
+  //.println("ver 4.0\n");
   for (uint8_t t = 4; t > 0; t--) {
-    Serial.printf("[SETUP] WAIT %d...\n", t);
-    Serial.flush();
+    //.printf("[SETUP] WAIT %d...\n", t);
+    //.flush();
     delay(1000);
   }
 
@@ -265,7 +250,7 @@ void loop() {
   if (desired[VERSION]["integerValue"].as<int>() != lastUpdated) {
     lastUpdated = desired[VERSION]["integerValue"].as<int>();
     if (!strcmp(desired[ACTION]["stringValue"], ACTION_GET)) {
-      Serial.println("get");
+      //.println("get");
       helixUnload(desired);
     } else if (!strcmp(desired[ACTION]["stringValue"], ACTION_PUT)) {
       helixDeposit(desired);
@@ -273,7 +258,7 @@ void loop() {
     firebaseFuncCall("proccess done");
   }
   jsonBuffer.clear();
-  Serial.println("Wait 10s before next round...");
+  //.println("Wait 10s before next round...");
   delay(1000);
 
 }

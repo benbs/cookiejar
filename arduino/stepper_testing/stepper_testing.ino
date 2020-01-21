@@ -24,13 +24,13 @@ void loop() {
   }
   delay(1000); // One second delay
   
-  digitalWrite(dirPin,LOW); //Changes the rotations direction
-  // Makes 400 pulses for making two full cycle rotation
-  for(int x = 0; x < 200; x++) {
-    digitalWrite(stepPin,HIGH);
-    delayMicroseconds(1500);
-    digitalWrite(stepPin,LOW);
-    delayMicroseconds(1500);
-  }
-  delay(1000);
+//  digitalWrite(dirPin,LOW); //Changes the rotations direction
+//  // Makes 200 pulses for making two full cycle rotation
+//  for(int x = 0; x < 200; x++) {
+//    digitalWrite(stepPin,HIGH);
+//    delayMicroseconds(1500);
+//    digitalWrite(stepPin,LOW);
+//    delayMicroseconds(1500);
+//  }
+//  delay(1000);
 }
