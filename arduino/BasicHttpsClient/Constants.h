@@ -28,11 +28,16 @@ String URL = "https://firestore.googleapis.com/v1beta1/projects/cookie-jar-c7a3a
 #define CYCLE_PULSES 200
 #define MOTOR_SPEED 1500
 
-//#define SSID "BenSassons2.4"
-//#define PASSWORD "k7p23txr"
+//#define SSID "El-tigre"
+//#define PASSWORD "peekab00"
+//
+//#define SSID "Elia"
+//#define PASSWORD "eliaweiz"
 
-#define SSID "Elia"
-#define PASSWORD "eliaweiz"
+#define SSID "TechPublic"
+//#define PASSWORD "peekab00"
+
+
 
 #define ACTION "actionType"
 #define ACTION_PUT "put"

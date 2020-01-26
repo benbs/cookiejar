@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { TextInput, View, Text } from 'react-native';
+import useDebounce from './utils';
+import { ColoredText } from './Text';
 
 const Input = ({ label, value, onChangeText, placeHolder, secureTextEntry }) => {
   const { inputStyle, labelStyle, containerStyle } = styles;
@@ -40,3 +42,34 @@ const styles = {
   }
 };
 export { Input };
+
+export const SettingsLabel = ({ children }) => {
+  return <ColoredText color="#999999" style={{
+      fontSize: 14,
+      margin: 0,
+      padding: 0
+  }}>{children}</ColoredText>;
+}
+
+export const SettingsTextInput = ({ placeholder, onChange, value, ...props }) => {
+  const [innerValue, setValue] = useState(value);
+  const debouncedValue = useDebounce(innerValue, 500);
+
+  useEffect(() => {
+      if (onChange) {
+          onChange(innerValue);
+      }
+  }, [debouncedValue]);
+
+  return <>        
+      <TextInput placeholder={placeholder}
+          style={{
+              fontSize: 18,
+              margin: 0,
+              paddingVertical: 0,
+              paddingBottom: 2,
+              marginBottom: 20,
+          }}
+          onChangeText={value => setValue(value)} value={innerValue} {...props}></TextInput>
+  </>;
+}

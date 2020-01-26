@@ -125,6 +125,8 @@ JsonObject& getJson(String JsonURL) {
 void spinStepper(int motorID, int cycles) {
   int dirPin;
   int stepPin;
+  int myCycles=cycles;
+  int myPulses=CYCLE_PULSES;
   //in case of put in machine
 
   //-----------
@@ -152,6 +154,7 @@ void spinStepper(int motorID, int cycles) {
     case CART_ID:
       stepPin = CART_STEP_PIN;
       dirPin = CART_DIR_PIN;
+      myPulses-=14;
       //.println("switch cart case");
       break;
 
@@ -161,15 +164,15 @@ void spinStepper(int motorID, int cycles) {
       break;
   }
 
-  if (cycles > 0) {
+  if (myCycles > 0) {
     digitalWrite(dirPin, HIGH); // Enables the motor to move in a particular direction
   }
   else {
     digitalWrite(dirPin, LOW);
   }
   yield();
-  for (int i = 0; i < abs(cycles); i++) {
-    for (int x = 0; x < CYCLE_PULSES; x++) {
+  for (int i = 0; i < abs(myCycles); i++) {
+    for (int x = 0; x < myPulses; x++) {
       digitalWrite(stepPin, HIGH);
       delayMicroseconds(MOTOR_SPEED);
       digitalWrite(stepPin, LOW);
@@ -190,7 +193,7 @@ void helixDeposit(JsonObject& desired) {
     //delay(1000);
     openCart();//open cart
     spinStepper(CART_ID, CART_CYCLES * (helixID) * -1); //move cart to base
-    spinStepper(helixID, cycles*(-1)); // get machine ready to new snack
+    spinStepper(helixID, (cycles*(-1)-1)); // get machine ready to new snack
 
   } else {
     //.println("ERROR!\n");
@@ -235,7 +238,7 @@ void setup() {
   }
 
   WiFi.mode(WIFI_STA);
-  WiFiMulti.addAP(SSID, PASSWORD);
+  WiFiMulti.addAP(SSID);//, PASSWORD);
   JsonObject& data = getJson(URL)["fields"];
   helixes = data["slotCount"]["integerValue"].as<int>();
   lastUpdated = data["properties"]["mapValue"]["fields"]["desired"]["mapValue"]["fields"][VERSION]["integerValue"].as<int>();

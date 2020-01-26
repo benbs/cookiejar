@@ -1,49 +1,14 @@
 import React, {Component, useState, useEffect} from 'react';
 
 import { StyleSheet, View, Image, TouchableOpacity, ToastAndroid } from 'react-native';
-import  BasicFlatList  from './common/BasicFlatList'
-import SnackPage from './SnackPage';
 import firestore from '@react-native-firebase/firestore';
 import { NavigationScreenProp, NavigationState, NavigationParams } from 'react-navigation';
 
-import BarcodeScannerScreen2 from './BarcodeScannerScreen';
+import Text, { ColoredText } from './common/Text';
+import { useNavigation } from 'react-navigation-hooks';
 
-import Text from './common/Text';
-import auth from '@react-native-firebase/auth';
 
-type MyProps = {item:any};/*props*/
-type MyState = {currentItem: any, toShow:boolean, snacks:any[]};/*state props*/
-export class SnackListt extends Component<MyProps,MyState> {
-    state={toShow:false,currentItem:null, snacks:[]};
-    handlePress=(item)=>{
-        //alert('cals:'+item.calories);
-        this.setState({ toShow:true, currentItem:item});
-    }
-    cancelPress=()=>{
-        //alert('cancel');
-        this.setState({ toShow:false});
-
-    }
-
-    async componentDidMount() {
-        const querySnapshot = await firestore().collection('snacks').get();
-        const snacks = querySnapshot.docs.map(documentSnapshot => ({
-            ...documentSnapshot.data(),
-            key: documentSnapshot.id, // required for FlatList
-        }));
-        this.setState({ snacks });
-    }
-    render() {
-        if(this.state.toShow){
-            return(        
-                <SnackPage name={this.state.currentItem.name} barCode={this.state.currentItem.key}
-                image={this.state.currentItem.image} calories={this.state.currentItem.calories} 
-                cancelPress={this.cancelPress} />
-                )
-        }
-        return <BasicFlatList flatListData={this.state.snacks} onPress={this.handlePress} />;
-    }
-}
+const FUNCTIONS_BASE_URL = 'https://us-central1-cookie-jar-c7a3a.cloudfunctions.net/';
 
 const styles = StyleSheet.create({
     topSection: {
@@ -68,22 +33,32 @@ const styles = StyleSheet.create({
     dial: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        overflow: 'hidden'
     },
     snackSection: {
         flex: 2,
         backgroundColor: '#ddd',
-        paddingVertical: 7
+        paddingVertical: 7,
+        flexWrap: "wrap",
+        flexDirection: 'row'
     },
     snackItem: {
-        flex: 1,
         flexDirection: 'row',
+        width: '50%',
+        height: '100%',
+
         alignItems: 'center',
+        alignSelf: 'center',
         padding: 10,
+        maxHeight: '50%'
     },
     snackImage: {
-        height: 105,
-        width: 105,
+        alignSelf: 'stretch',
+        // aspectRatio: 1,
+        // height: '100%',
+        flex: 1,
+
         backgroundColor: '#aaa',
         borderRadius: 10,
         borderWidth: 2,
@@ -92,8 +67,26 @@ const styles = StyleSheet.create({
     },
     snackDescription: {
         flex: 1,
-        height: 105,
+        // height: 105,
         marginStart: 10
+    },
+    emptyState: {
+        flex: 1,
+        // alignContent: 'center',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    addSnack: {
+        borderRadius: 100,
+        width: 50,
+        height: 50,
+        position: 'absolute',
+        bottom: 10,
+        right: 10,
+        backgroundColor: 'green',
+        fontWeight: 'bold',
+        alignItems: 'center',
+        justifyContent: 'center'
     }
 
 });
@@ -103,88 +96,114 @@ interface ISnackListProps {
     navigation: NavigationScreenProp<NavigationState, NavigationParams>;
 }
 
-const snacksMock = [
-    {
-        name: 'Snickers',
-        image: 'https://marketingweek.imgix.net/content/uploads/2019/07/15161949/snickers.jpg',
-        description: '1000 calories',
-    },
-    {
-        name: 'Reeses',
-        image: 'https://cdn.cnn.com/cnnnext/dam/assets/191010155858-reeses-cups-halloween-exlarge-169.jpg',
-        description: '500 calories'
-    },
-    {
-        name: 'Kinder Bueno',
-        image: 'https://previews.123rf.com/images/radub85/radub851603/radub85160300280/53947625-bucharest-romania-december-04-2015-kinder-chocolate-is-a-confectionery-product-brand-line-of-italian.jpg',
-        description: '1000 calories'
-    }
-]
-
 function handlePress() {
     ToastAndroid.show('aaa', ToastAndroid.BOTTOM);
 }
 
-export default function SnackList() {
+function handleGetItem(helixId) {
+    fetch(`${FUNCTIONS_BASE_URL}iotAction?actionType=get&helixIndex=${helixId}`)
+        .then(resp => resp.json())
+        .then(respJson => {
+            if (respJson.status === 'error') {
+                ToastAndroid.show(respJson.result, ToastAndroid.BOTTOM);
+            }
+        })
+        .catch(error => {
+            ToastAndroid.show(error, ToastAndroid.BOTTOM);
+        })
+}
+
+export default function SnackList({ navigation }) {
 
     const [currentUser, setCurrentUser] = useState();
-    const [] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [machine, setMachine] = useState();
+    const [snackMap, setSnackMap] = useState();
+
+    const machineRef = firestore().collection('machines').doc('o5AkuMpP2Vb2bpQvGx70');
+    const userRef = firestore().collection('users').doc('benbs93@gmail.com');
 
     useEffect(() => {
-        //auth().signOut();
-        const _unsubscribe = firestore().collection('users').doc('benbs93@gmail.com').onSnapshot(doc => {
+        return userRef.onSnapshot(doc => {
             const user =  doc.data();
 
             setCurrentUser(user);
-            if (loading) {
-                setLoading(false);
-            }
         });
+    }, []);
 
-        return () => _unsubscribe();
-    });
+    useEffect(() => {
+        return machineRef.onSnapshot(querySnapshots => {
+            const machine = querySnapshots.data();
+            setMachine(machine);
+            
+            const snackPromises = Object.values<any[]>(machine.inventory)
+            .filter(items => items && items.length)
+            .map(items => items && items.length && items[0].get());
+            
+            
+            const snackMap = {};
+            Promise.all(snackPromises).then(results => {
+                for (let snack of results) {
+                    snackMap[snack.id] = snack.data();
+                }
+                setSnackMap(snackMap);
+            })
+        })
+    }, []);
 
-    if (loading) {
+    if (!machine || !currentUser || !snackMap) {
         return <Text>loading...</Text>;
     }
+
+    const inventoryEntries = Object.entries <any[]>(machine.inventory)
+        .filter(([_, helixItems]) => helixItems && helixItems.length)
+        .map(([helixId, helixItems]) => [helixId, snackMap[helixItems[0].id]])
+        .filter(([helixId, item]) => item);
+    
+
     return <>
-        <BarcodeScannerScreen2 />
-        
-        
-    </>;
-   /* <View style={styles.topSection}>
-    <View style={styles.titleBar}>
-        <TouchableOpacity onPress={handlePress}>
-            <Image 
-                style={styles.settingsIcon}
-                source={require('../../assets/images/settings.png')}
-            ></Image>
-        </TouchableOpacity>
-        <Text style={styles.welcomeHeader}>Welcome, {currentUser.name}</Text>
-    </View>
-    <View style={styles.dial}>
-        <Image
-            style={{resizeMode: 'center'}}
-            source={require('../../assets/images/dial.png')}>
-        </Image>
-    </View>
-</View>
-<View style={styles.snackSection}>
-    {snacksMock.map((snack, idx) => (
-        <View style={styles.snackItem} key={idx}>
-            <View style={styles.snackImage}>
-            <Image
-                style={{width: 105, height: 105}}
-                source={{uri: snack.image}}
-            />
+        <View style={styles.topSection}>
+            <View style={styles.titleBar}>
+                <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
+                    <Image 
+                        style={styles.settingsIcon}
+                        source={require('../../assets/images/settings.png')}
+                    ></Image>
+                </TouchableOpacity>
+                <Text style={styles.welcomeHeader}>Welcome, {currentUser.name}</Text>
             </View>
-            <View style={styles.snackDescription}>
-                <Text style={{ fontSize: 20 }}>{snack.name}</Text>
-                <Text style={{ fontSize: 12 }}>{snack.description}</Text>
+            <View style={styles.dial}>
+                <Image
+                    style={{resizeMode: 'center'}}
+                    source={require('../../assets/images/dial.png')}>
+                </Image>
             </View>
         </View>
-    ))}
-</View>
-*/
+        <View style={styles.snackSection}>
+            {inventoryEntries.length ? inventoryEntries.map(([idx, snack]) => (
+                <TouchableOpacity style={styles.snackItem} key={idx} onPress={() => handleGetItem(idx)}>
+                    <View style={styles.snackImage}>
+                        <Image
+                            style={{ flex: 1, width: undefined, height: undefined }}
+                            resizeMode="cover"
+                            source={{ uri: snack.image }}
+                        />
+                    </View>
+                    {/* <View style={styles.snackDescription}>
+                        <Text style={{ fontSize: 20 }}>{snack.name}</Text>
+                        <Text style={{ fontSize: 12 }}>{snack.description}</Text>
+                    </View> */}
+                </TouchableOpacity>
+            )) : 
+                <View style={styles.emptyState}>
+                    <Image source={require('../../assets/images/cookie.png')}
+                        style={{width: 200, height: 200, marginBottom: 20}}></Image>
+                    <Text>Your Jar is empty!</Text>
+                    <Text>Add Candies</Text>
+                </View>
+            }
+
+            <TouchableOpacity style={styles.addSnack} onPress={() => navigation.navigate('Scanner')}><ColoredText color="white" style={{fontSize: 50}}>+</ColoredText></TouchableOpacity>
+        </View>
+
+    </>;
 }

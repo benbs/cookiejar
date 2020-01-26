@@ -120,8 +120,8 @@ android {
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
-       // missingDimensionStrategy 'react-native-camera', 'mlkit'//GOOGLE'S camera
-       missingDimensionStrategy 'react-native-camera', 'general'//Regular camera
+        missingDimensionStrategy 'react-native-camera', 'general'
+
     }
     splits {
         abi {
